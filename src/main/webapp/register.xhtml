@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Register</title>
+</h:head>
+
+<h:body>
+    <h:form id="registerForm">
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Username: " for="username"/>
+            <h:inputText id="username" value="" required="true" requiredMessage="Please enter a username"/>
+
+            <h:outputLabel value="Password: " for="password"/>
+            <h:inputSecret id="password" value="" required="true" requiredMessage="Please enter a password"/>
+
+            <h:outputLabel value="eMAIL: " for="email"/>
+            <h:inputText id="email" value="" required="true" requiredMessage="Please enter an email" />
+
+            <h:commandButton value="Register" action=""/>
+
+        </h:panelGrid>
+    </h:form>
+
+</h:body>
+
+</html>
