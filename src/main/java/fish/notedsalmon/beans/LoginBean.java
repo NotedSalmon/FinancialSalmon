@@ -1,4 +1,4 @@
 package fish.notedsalmon.beans;
 
-public class empty {
+public class LoginBean {
 }
