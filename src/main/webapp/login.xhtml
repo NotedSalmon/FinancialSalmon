@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core">
-
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Login</title>
+    <h:outputStylesheet name="style.css"/>
 </h:head>
-
 <h:body>
     <h:form id="loginForm">
-        <h:panelGrid columns="2">
-            <h:outputLabel value="Username: " for="username"/>
-            <h:inputText id="username" value="" required="true" requiredMessage="Please enter a username"/>
+        <p:panel header="Login">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="Username:" />
+                <p:inputText id="username" value="#{loginBean.username}" required="true" />
 
-            <h:outputLabel value="Password: " for="password"/>
-            <h:inputSecret id="password" value="" required="true" requiredMessage="Please enter a password"/>
+                <h:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{loginBean.password}" required="true" />
 
-            <h:commandButton value="Login" action=""/>
-        </h:panelGrid>
+                <p:commandButton value="Login" action="#{loginBean.login}" update="loginForm" />
+                <p:button value="Back" outcome="index"/>
+                <p:button value="Skip" outcome="expenses"/>
+            </h:panelGrid>
+        </p:panel>
+        <p:messages id="messages" autoUpdate="true" />
     </h:form>
-
 </h:body>
-
 </html>

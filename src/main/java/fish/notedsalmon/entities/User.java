@@ -1,14 +1,19 @@
 package fish.notedsalmon.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
+@NamedQueries({
+        @NamedQuery(name = User.FIND_BY_USERNAME, query = "SELECT u FROM User u WHERE u.username = :username")
+})
 public class User {
+
+    public static final String FIND_BY_USERNAME = "User.findByUsername";
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = true)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -26,6 +31,19 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    public User(String firstName, String lastName, String username, String email, String password) {
+        this.firstname = firstName;
+        this.lastname = lastName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+
+    }
+
+    public User() {
+
+    }
 
     public Integer getId() {
         return id;

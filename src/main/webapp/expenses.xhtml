@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <h:outputLabel value="Expenses Table"/>
+</h:head>
+
+<h:body>
+    <h:form>
+        <div class="table">
+            <h5>Sorts multiple columns</h5>
+            <p>By using CTRL + Left Click , you can sort multiple columns</p>
+
+            <p:dataTable var="product" value="#{sortAndTest.products3}" sortMode="multiple">
+                <p:column headerText="Date(soon)" sortBy="#{product.date}">
+                    <h:outputText value="#{product.date}"/>
+                </p:column>
+
+                <p:column headerText="Name" sortBy="#{product.name}">
+                    <h:outputText value="#{product.name}"/>
+                </p:column>
+
+                <p:column headerText="Category" sortBy="#{product.category}" sortOrder="asc" sortPriority="2">
+                    <h:outputText value="#{product.category}"/>
+                </p:column>
+
+                <p:column headerText="Price" sortBy="#{product.price}" sortOrder="desc" sortPriority="1">
+                    <h:outputText value="#{product.price}">
+                        <f:convertNumber type="currency" currencySymbol="£"/>
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </h:form>
+</h:body>
+</html>

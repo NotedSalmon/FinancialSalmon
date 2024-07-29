@@ -1,31 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core">
-
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Register</title>
+    <h:outputStylesheet name="style.css"/>
 </h:head>
-
 <h:body>
     <h:form id="registerForm">
-        <h:panelGrid columns="2">
-            <h:outputLabel value="Username: " for="username"/>
-            <h:inputText id="username" value="" required="true" requiredMessage="Please enter a username"/>
+        <p:panel header="Register">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="firstName" value="First Name:" />
+                <p:inputText id="firstName" value="#{registerBean.firstName}" required="true" />
 
-            <h:outputLabel value="Password: " for="password"/>
-            <h:inputSecret id="password" value="" required="true" requiredMessage="Please enter a password"/>
+                <h:outputLabel for="lastName" value="Last Name:" />
+                <p:inputText id="lastName" value="#{registerBean.lastName}" required="true" />
 
-            <h:outputLabel value="Email: " for="email"/>
-            <h:inputText id="email" value="" required="true" requiredMessage="Please enter an email" />
+                <h:outputLabel for="username" value="Username:" />
+                <p:inputText id="username" value="#{registerBean.username}" required="true" />
 
-            <h:commandButton value="Register" action=""/>
+                <h:outputLabel for="email" value="Email:" />
+                <p:inputText id="email" value="#{registerBean.email}" required="true" />
 
-        </h:panelGrid>
+                <h:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{registerBean.password}" required="true" />
+
+                <h:outputLabel for="confirmPassword" value="Confirm Password:" />
+                <p:password id="confirmPassword" value="#{registerBean.confirmPassword}" required="true" />
+
+                <p:commandButton value="Register" action="#{registerBean.register}" update="registerForm" />
+                <p:button value="Back" outcome="index"/>
+            </h:panelGrid>
+        </p:panel>
+        <p:messages id="messages" autoUpdate="true" />
     </h:form>
-
 </h:body>
-
 </html>

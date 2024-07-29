@@ -1,23 +1,29 @@
+// LoginBean.java
 package fish.notedsalmon.beans;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import java.io.Serializable;
 
 @Named
-@RequestScoped
-public class LoginBean {
-
+@SessionScoped
+public class LoginBean implements Serializable {
     private String username;
     private String password;
 
-    public String login(){
-        return "success";
+    public String login() {
+        if ("user".equals(username) && "pass".equals(password)) {
+            return "home.xhtml?faces-redirect=true";
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login Failed", "Invalid username or password"));
+            return null;
+        }
     }
 
-
-
     /**
-     * Getters and setters
+     *  GETTERS & SETTERS
      */
 
     public String getUsername() {

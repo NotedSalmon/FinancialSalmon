@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "expenses")
-public class Expens {
+public class Expenses {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
