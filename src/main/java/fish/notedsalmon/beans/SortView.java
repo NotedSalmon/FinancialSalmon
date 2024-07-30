@@ -12,13 +12,10 @@ import org.primefaces.model.SortOrder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
 @Named("sortAndTest")
 @ViewScoped
 public class SortView implements Serializable {
-
-    private List<Product> products1;
-    private List<Product> products2;
     private List<Product> products3;
     private List<SortMeta> sortBy;
 
@@ -27,8 +24,6 @@ public class SortView implements Serializable {
 
     @PostConstruct
     public void init() {
-        products1 = service.getProducts(10);
-        products2 = service.getProducts(10);
         products3 = service.getProducts(50);
 
         sortBy = new ArrayList<>();
@@ -44,23 +39,12 @@ public class SortView implements Serializable {
                 .build());
     }
 
-    public List<Product> getProducts1() {
-        return products1;
-    }
-
-    public List<Product> getProducts2() {
-        return products2;
-    }
-
     public List<Product> getProducts3() {
         return products3;
-    }
-
-    public List<SortMeta> getSortBy() {
-        return sortBy;
     }
 
     public void setService(ProductService service) {
         this.service = service;
     }
 }
+ */
