@@ -4,20 +4,30 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "expenses")
+@NamedQueries(
+        @NamedQuery(name = Expenses.FIND_ALL, query = "SELECT e FROM Expenses e ORDER BY e.expense_date desc ")
+)
 public class Expenses {
+
+    public static final String FIND_ALL = "Expenses.findAll";
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = true)
     @Column(name = "id", nullable = false)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     @Column(name = "description")
@@ -26,8 +36,8 @@ public class Expenses {
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "date", nullable = false)
-    private Instant date;
+    @Column(name = "expense_date", nullable = false)
+    private LocalDateTime expense_date;
 
     public Integer getId() {
         return id;
@@ -69,12 +79,12 @@ public class Expenses {
         this.amount = amount;
     }
 
-    public Instant getDate() {
-        return date;
+    public LocalDateTime getExpense_date() {
+        return expense_date;
     }
 
-    public void setDate(Instant date) {
-        this.date = date;
+    public void setExpense_date(LocalDateTime date) {
+        this.expense_date = date;
     }
 
 }

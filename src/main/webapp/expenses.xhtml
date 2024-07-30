@@ -10,26 +10,32 @@
 </h:head>
 
 <h:body>
-    <h:form>
+    <h:form id="fileUpload" enctype="multipart/form-data">
+        <p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
+        <p:commandButton value="Submit" ajax="false" action="#{importBean.upload()}" styleClass="mt-3 ui-button-outlined block"/>
+        <p:messages/>
+    </h:form>
+
+    <h:form id="expensesTable">
         <div class="table">
             <h5>Sorts multiple columns</h5>
             <p>By using CTRL + Left Click , you can sort multiple columns</p>
 
-            <p:dataTable var="product" value="#{sortAndTest.products3}" sortMode="multiple">
-                <p:column headerText="Date(soon)" sortBy="#{product.date}">
-                    <h:outputText value="#{product.date}"/>
+            <p:dataTable var="expense" value="#{importBean.expenses}" sortMode="multiple">
+                <p:column headerText="Date(soon)" sortBy="#{expense.expense_date}">
+                    <h:outputText value="#{expense.expense_date}"/>
                 </p:column>
 
-                <p:column headerText="Name" sortBy="#{product.name}">
-                    <h:outputText value="#{product.name}"/>
+                <p:column headerText="Name" sortBy="#{expense.description}">
+                    <h:outputText value="#{expense.description}"/>
                 </p:column>
 
-                <p:column headerText="Category" sortBy="#{product.category}" sortOrder="asc" sortPriority="2">
-                    <h:outputText value="#{product.category}"/>
+                <p:column headerText="Category" sortBy="empty" sortOrder="asc" sortPriority="2">
+                    <h:outputText value="empty"/>
                 </p:column>
 
-                <p:column headerText="Price" sortBy="#{product.price}" sortOrder="desc" sortPriority="1">
-                    <h:outputText value="#{product.price}">
+                <p:column headerText="Price" sortBy="#{expense.amount}" sortOrder="desc" sortPriority="1">
+                    <h:outputText value="#{expense.amount}">
                         <f:convertNumber type="currency" currencySymbol="£"/>
                     </h:outputText>
                 </p:column>
