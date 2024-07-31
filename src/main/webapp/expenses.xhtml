@@ -17,12 +17,18 @@
     </h:form>
 
     <h:form id="expensesTable">
+        <p:growl id="msgs" showDetail="true"/>
+
         <div class="table">
             <h5>Sorts multiple columns</h5>
             <p>By using CTRL + Left Click , you can sort multiple columns</p>
 
-            <p:dataTable var="expense" value="#{importBean.expenses}" sortMode="multiple">
-                <p:column headerText="Date(soon)" sortBy="#{expense.expense_date}">
+            <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple" editable="true" editMode="cell"
+                         widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px">
+
+                <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update=":expensesTable:expenses :expensesTable:msgs"/>
+
+                <p:column headerText="Date" sortBy="#{expense.expense_date}">
                     <h:outputText value="#{expense.expense_date}"/>
                 </p:column>
 
@@ -30,8 +36,18 @@
                     <h:outputText value="#{expense.description}"/>
                 </p:column>
 
-                <p:column headerText="Category" sortBy="empty" sortOrder="asc" sortPriority="2">
-                    <h:outputText value="empty"/>
+                <p:column headerText="Category" sortBy="#{expense.category}" sortOrder="asc" sortPriority="2">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{expense.category.category}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:selectOneMenu value="#{expense.category}" style="width:100%" converter="categoryConverter">
+                                <f:selectItems value="#{importBean.categoriesList}" var="category"
+                                               itemLabel="#{category.category}" itemValue="#{category}"/>
+                            </h:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
                 </p:column>
 
                 <p:column headerText="Price" sortBy="#{expense.amount}" sortOrder="desc" sortPriority="1">

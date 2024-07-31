@@ -1,25 +1,30 @@
 package fish.notedsalmon.beans;
 
+import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
 import fish.notedsalmon.services.BankParserService;
+import fish.notedsalmon.services.EditService;
 import fish.notedsalmon.services.ExpenseService;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 
 @Named
-@RequestScoped
-public class ImportBean {
+@ViewScoped
+public class ImportBean implements Serializable {
 
     @EJB
     private BankParserService bankParserService;
@@ -27,8 +32,28 @@ public class ImportBean {
     @Inject
     ExpenseService expenseService;
 
+    @Inject
+    EditService editService;
+
     private UploadedFile file;
     private List<Expenses> expensesList;
+    private List<Category> categoriesList;
+
+    @PostConstruct
+    public void init() {
+        expensesList = expenseService.getExpensesList();
+        categoriesList = expenseService.getCategoriesList();
+
+        addDefaultCategories();
+    }
+
+    private void addDefaultCategories() {
+        String[] defaultCategories = {"ENTERTAINMENT", "UTILITIES", "FOOD", "SHOPPING","EMPTY"};
+        for (String category : defaultCategories) {
+            editService.addCategoryIfNotExists(category);
+        }
+        categoriesList = expenseService.getCategoriesList();
+    }
 
     public void upload() {
         if (file != null) {
@@ -43,13 +68,28 @@ public class ImportBean {
         }
     }
 
-    @PostConstruct
-    public void init() {
-        expensesList = expenseService.getExpensesList();
+    public List<Category> getCategoriesList() {
+        return expenseService.getCategoriesList();
     }
 
     public List<Expenses> getExpenses() {
         return expensesList;
+    }
+
+    public void onCellEdit(CellEditEvent event) {
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+            int rowIndex = event.getRowIndex();
+            Expenses expense = expensesList.get(rowIndex);
+            expense.setCategory((Category) newValue);
+
+            expenseService.updateExpense(expense);
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Expense Changed", "Old: " + oldValue + ", New: " + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
     }
 
     public void handleFileUpload(FileUploadEvent event) {

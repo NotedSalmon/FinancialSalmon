@@ -3,6 +3,7 @@ package fish.notedsalmon.services;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -42,6 +43,9 @@ public class BankParserService {
         try (CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
             List<String[]> records = reader.readAll();
             boolean skipHeaders = true;
+
+            Category defaultCategory = em.find(Category.class, 5);
+
             for (String[] record : records) {
                 if (skipHeaders) {
                     skipHeaders = false;
@@ -63,6 +67,7 @@ public class BankParserService {
                 expense.setDescription(description);
                 expense.setAmount(amount);
                 expense.setExpense_date(localDateTime);
+                expense.setCategory(defaultCategory);
 
                 em.persist(expense);
                 expensesList.add(expense);
