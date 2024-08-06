@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,20 @@ public class BankParserService {
                 if (record[5] != null && !record[5].isEmpty()) {
                     amount = new BigDecimal(record[5]);
                 } else {amount = BigDecimal.valueOf(0);} //if it is empty then sets the value to 0
-                LocalDate date = LocalDate.parse(record[0], dateFormatter);
+
+                LocalDate date = null;
+                if (record[0] != null && !record[0].trim().isEmpty()) {
+                    try {
+                        date = LocalDate.parse(record[0].trim(), dateFormatter);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Skipping record due to date parsing error: " + e.getMessage());
+                        continue;
+                    }
+                } else {
+                    System.err.println("Skipping record due to empty date field");
+                    continue;
+                }
+
                 LocalDateTime localDateTime = date.atStartOfDay();
 
                 //Adds data into an expense object and adds to DB

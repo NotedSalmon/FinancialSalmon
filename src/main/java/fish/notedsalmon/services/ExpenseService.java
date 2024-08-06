@@ -38,7 +38,6 @@ public class ExpenseService {
         return em.createQuery("SELECT c FROM Category c", Category.class).getResultList();
     }
 
-
     @Transactional
     public void updateExpense(Expenses expense) {
         try {
