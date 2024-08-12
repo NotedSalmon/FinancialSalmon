@@ -47,10 +47,20 @@ public class ImportBean implements Serializable {
         addDefaultCategories();
     }
 
+    /**
+     * Creates default classes with colours
+     */
     private void addDefaultCategories() {
-        String[] defaultCategories = {"ENTERTAINMENT", "UTILITIES", "FOOD", "SHOPPING","EMPTY"};
-        for (String category : defaultCategories) {
-            editService.addCategoryIfNotExists(category);
+        Object[][] defaultCategories = {
+                {"ENTERTAINMENT", 128, 0, 128},  // Purple
+                {"UTILITIES", 255, 255, 0},      // Yellow
+                {"FOOD", 0, 128, 0},             // Green
+                {"SHOPPING", 173, 216, 230},     // Light Blue
+                {"EMPTY", 255, 0, 0}             // Red
+        };
+
+        for (Object[] category : defaultCategories) {
+            editService.addCategoryIfNotExists((String) category[0], (int) category[1], (int) category[2], (int) category[3]);
         }
         categoriesList = expenseService.getCategoriesList();
     }

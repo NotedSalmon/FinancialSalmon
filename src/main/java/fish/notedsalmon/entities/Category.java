@@ -19,6 +19,39 @@ public class Category implements Comparable<Category> {
     @Column(name = "category", nullable = false, length = 50, unique = true)
     private String category;
 
+    @Column(name = "colour_red")
+    private Integer colourRed;
+
+    @Column(name = "colour_green")
+    private Integer colourGreen;
+
+    @Column(name = "colour_blue")
+    private Integer colourBlue;
+
+    public Integer getColourBlue() {
+        return colourBlue;
+    }
+
+    public void setColourBlue(Integer colourBlue) {
+        this.colourBlue = colourBlue;
+    }
+
+    public Integer getColourGreen() {
+        return colourGreen;
+    }
+
+    public void setColourGreen(Integer colourGreen) {
+        this.colourGreen = colourGreen;
+    }
+
+    public Integer getColourRed() {
+        return colourRed;
+    }
+
+    public void setColourRed(Integer colourRed) {
+        this.colourRed = colourRed;
+    }
+
     public Integer getId() {
         return id;
     }

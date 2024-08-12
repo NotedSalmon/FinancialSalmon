@@ -23,7 +23,7 @@ public class EditService {
     }
 
     @Transactional
-    public void addCategoryIfNotExists(String categoryName) {
+    public void addCategoryIfNotExists(String categoryName, int red, int green, int blue) {
         try {
             Category existingCategory = em.createQuery("SELECT c FROM Category c WHERE c.category = :category", Category.class)
                     .setParameter("category", categoryName)
@@ -31,6 +31,9 @@ public class EditService {
         } catch (NoResultException e) {
             Category newCategory = new Category();
             newCategory.setCategory(categoryName);
+            newCategory.setColourRed(red);
+            newCategory.setColourGreen(green);
+            newCategory.setColourBlue(blue);
             em.persist(newCategory);
         }
     }

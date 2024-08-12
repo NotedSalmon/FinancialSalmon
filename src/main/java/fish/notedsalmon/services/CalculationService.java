@@ -38,12 +38,15 @@ public class CalculationService {
             if (category != null) {
                 String categoryName = category.getCategory();
                 BigDecimal amount = expense.getAmount();
+                Integer red = category.getColourRed();
+                Integer green = category.getColourGreen();
+                Integer blue = category.getColourBlue();
 
                 CategorySum existingCategorySum = findCategorySumByName(categoryName);
                 if (existingCategorySum != null) {
-                    updateCategorySum(existingCategorySum, amount);
+                    updateCategorySum(existingCategorySum, amount, red, green, blue);
                 } else {
-                    summedCategories.add(new CategorySum(categoryName, amount));
+                    summedCategories.add(new CategorySum(categoryName, amount,red,green,blue));
                 }
             }
         }
@@ -58,10 +61,11 @@ public class CalculationService {
         return null;
     }
 
-    private void updateCategorySum(CategorySum existingCategorySum, BigDecimal amount) {
+    private void updateCategorySum(CategorySum existingCategorySum, BigDecimal amount, Integer red, Integer green, Integer blue) {
+
         summedCategories.remove(existingCategorySum);
         BigDecimal newSum = existingCategorySum.sum().add(amount);
-        summedCategories.add(new CategorySum(existingCategorySum.categoryName(), newSum));
+        summedCategories.add(new CategorySum(existingCategorySum.categoryName(), newSum, red,green,blue));
     }
 
     public BigDecimal getSumForCategory(String categoryName) {

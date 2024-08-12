@@ -45,7 +45,7 @@ public class BankParserService {
             List<String[]> records = reader.readAll();
             boolean skipHeaders = true;
 
-            Category defaultCategory = em.find(Category.class, 5);
+            Category defaultCategory = em.find(Category.class, 10);
 
             for (String[] record : records) {
                 if (skipHeaders) {

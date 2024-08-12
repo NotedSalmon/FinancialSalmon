@@ -52,10 +52,11 @@ public class PieChartUtil implements Serializable {
             for (CategorySum categorySum : summedCategories) {
                 dataset.addData(categorySum.sum());
                 labels.add(categorySum.categoryName());
-                dataset.setBackgroundColor(colors);
+                colors.add(new Color(categorySum.red(), categorySum.green(), categorySum.blue()));
+                //dataset.setBackgroundColor(colors);
             }
 
-            dataset.addBackgroundColors(new Color(0xcc, 0x99, 0xff), new Color(213, 0xff, 0xff));
+            dataset.setBackgroundColor(colors);
             dataset.setLabel("Expenses by Category");
 
             PieData data = new PieData().addDataset(dataset).setLabels(labels.toArray(new String[0]));
