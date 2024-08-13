@@ -1,6 +1,11 @@
 package fish.notedsalmon.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -17,7 +22,19 @@ public class ExpensesRule {
 
     @NotNull
     @Column(name = "expense_category", nullable = false)
-    private String expenseCategory;
+    private Integer expenseCategory;
+
+    @Column(name = "isactive")
+    private Integer isactive;
+
+    public Integer getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(Integer isactive) {
+        this.isactive = isactive;
+    }
+
 
     public Integer getId() {
         return id;
@@ -35,18 +52,12 @@ public class ExpensesRule {
         this.expenseDescription = expenseDescription;
     }
 
-    public String getExpenseCategory() {
+    public Integer getExpenseCategory() {
         return expenseCategory;
     }
 
-    public void setExpenseCategory(String expenseCategory) {
+    public void setExpenseCategory(Integer expenseCategory) {
         this.expenseCategory = expenseCategory;
     }
 
-/*
- TODO [Reverse Engineering] create field to map the 'isactive' column
- Available actions: Define target Java type | Uncomment as is | Remove column mapping
-    @Column(name = "isactive", columnDefinition = "bit not null")
-    private Object isactive;
-*/
 }

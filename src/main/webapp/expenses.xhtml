@@ -35,7 +35,7 @@
                 <p:growl id="msgs" showDetail="true"/>
                 <h5>Sorts multiple columns</h5>
                 <p>By using CTRL + Left Click , you can sort multiple columns</p>
-                <p:commandButton id="btn_create_rule" value="Create Rule" action="#{ruleBean}"/>
+                <h:button id="createRule" value="Create or display rules" outcome="createRule" styleClass="mt-3 ui-button-outlined"/>
                 <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple" editable="true" editMode="cell"
                              widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px">
                     <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
@@ -63,6 +63,7 @@
                             <f:convertNumber type="currency" currencySymbol="£"/>
                         </h:outputText>
                     </p:column>
+                    <p:sticky target="tb"/>
                 </p:dataTable>
             </h:form>
         </div>
