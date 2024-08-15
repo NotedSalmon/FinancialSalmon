@@ -6,6 +6,7 @@ import com.opencsv.exceptions.CsvException;
 import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -28,6 +29,9 @@ public class BankParserService {
     @PersistenceContext
     private EntityManager em;
 
+    @Inject
+    private RuleService ruleService;
+
     /**
      * Transactional annotation ensures that the database operations are handled within a transaction.
      * The description, amount and date are extracted from the CSV and then added to the database.
@@ -41,6 +45,7 @@ public class BankParserService {
     public List<Expenses> parseAndSaveExpenses(InputStream inputStream) {
         List<Expenses> expensesList = new ArrayList<>();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         try (CSVReader reader = new CSVReader(new InputStreamReader(inputStream))) {
             List<String[]> records = reader.readAll();
             boolean skipHeaders = true;
@@ -55,11 +60,8 @@ public class BankParserService {
                 //attaches header index to variables
                 String description = record[4];
 
-                BigDecimal amount;
                 //Checks if the 5 index column is not null and not empty
-                if (record[5] != null && !record[5].isEmpty()) {
-                    amount = new BigDecimal(record[5]);
-                } else {amount = BigDecimal.valueOf(0);} //if it is empty then sets the value to 0
+                BigDecimal amount = record[5] != null && !record[5].isEmpty() ? new BigDecimal(record[5]) : BigDecimal.valueOf(0);
 
                 LocalDate date = null;
                 if (record[0] != null && !record[0].trim().isEmpty()) {
@@ -76,12 +78,21 @@ public class BankParserService {
 
                 LocalDateTime localDateTime = date.atStartOfDay();
 
+                Category category;
+                Integer matchedCategoryID = ruleService.findRuleByExpenseName(description);
+
+                if (matchedCategoryID != null) {
+                    category = em.find(Category.class, matchedCategoryID);
+                } else {
+                    category = defaultCategory;
+                }
+
                 //Adds data into an expense object and adds to DB
                 Expenses expense = new Expenses();
                 expense.setDescription(description);
                 expense.setAmount(amount);
                 expense.setExpense_date(localDateTime);
-                expense.setCategory(defaultCategory);
+                expense.setCategory(category);
 
                 em.persist(expense);
                 expensesList.add(expense);

@@ -5,20 +5,24 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-<h:head>
-    <h1> Expenses Table </h1>
-    <h:outputStylesheet name="style.css"/>
-</h:head>
 
-<h:body>
-    <div class="container">
+<ui:composition template="tabMenu.xhtml">
+    <ui:define name="title">
+        Expenses Page
+    </ui:define>
+    <ui:define name="script">
+        <h:outputStylesheet name="style.css"/>
+    </ui:define>
+    <ui:define name="content">
         <div class="header">
             <h:form id="fileUpload" enctype="multipart/form-data">
                 <h:outputText value="Upload File here ->"/>
                 <p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
-                <p:commandButton value="Submit" ajax="false" action="#{importBean.upload()}" styleClass="mt-3 ui-button-outlined"/>
+                <p:commandButton value="Submit" ajax="false" action="#{importBean.upload()}"
+                                 styleClass="mt-3 ui-button-outlined"/>
                 <p:messages/>
             </h:form>
+
             <div class="chart-container">
                 <h:form id="chartForm">
                     <p:chart id="global-chart" value="#{pieChartUtil.pieModel}"/>
@@ -33,11 +37,18 @@
         <div class="table">
             <h:form id="expensesTable">
                 <p:growl id="msgs" showDetail="true"/>
-                <h5>Sorts multiple columns</h5>
-                <p>By using CTRL + Left Click , you can sort multiple columns</p>
-                <h:button id="createRule" value="Create or display rules" outcome="createRule" styleClass="mt-3 ui-button-outlined"/>
-                <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple" editable="true" editMode="cell"
-                             widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px">
+                <h3>Sorts multiple columns</h3>
+                <p>By using CTRL + Left Click, you can sort multiple columns</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <p:button id="createRule" value="Create or display rules" outcome="createRule"
+                              styleClass="mt-3 ui-button-outlined"/>
+                    <p:commandButton value="Clear Table" action="#{importBean.clearTable}" update="expenses msgs"
+                                     styleClass="ui-button-outlined" style="margin-bottom: 10px;"/>
+                </div>
+                <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple"
+                             editable="true" editMode="cell"
+                             widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px"
+                             stickyHeader="true" stickyTopAt=".layout-topbar">
                     <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
                     <p:column headerText="Date" sortBy="#{expense.expense_date}">
                         <h:outputText value="#{expense.expense_date}"/>
@@ -45,13 +56,15 @@
                     <p:column headerText="Name" sortBy="#{expense.description}">
                         <h:outputText value="#{expense.description}"/>
                     </p:column>
-                    <p:column headerText="Category" sortBy="#{expense.category}" sortOrder="asc" sortPriority="2">
+                    <p:column headerText="Category" sortBy="#{expense.category.category}" sortOrder="asc"
+                              sortPriority="2">
                         <p:cellEditor>
                             <f:facet name="output">
                                 <h:outputText value="#{expense.category.category}"/>
                             </f:facet>
                             <f:facet name="input">
-                                <h:selectOneMenu value="#{expense.category}" style="width:100%" converter="categoryConverter">
+                                <h:selectOneMenu value="#{expense.category}" style="width:100%"
+                                                 converter="categoryConverter">
                                     <f:selectItems value="#{importBean.categoriesList}" var="category"
                                                    itemLabel="#{category.category}" itemValue="#{category}"/>
                                 </h:selectOneMenu>
@@ -63,10 +76,10 @@
                             <f:convertNumber type="currency" currencySymbol="£"/>
                         </h:outputText>
                     </p:column>
-                    <p:sticky target="tb"/>
                 </p:dataTable>
             </h:form>
         </div>
-    </div>
-</h:body>
+    </ui:define>
+</ui:composition>
+
 </html>

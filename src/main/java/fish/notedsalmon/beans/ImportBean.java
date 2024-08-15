@@ -107,6 +107,12 @@ public class ImportBean implements Serializable {
         upload();
     }
 
+    public void clearTable() {
+        expensesList.clear();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table Cleared", "All expenses have been removed."));
+
+    }
+
     public UploadedFile getFile() {
         return file;
     }

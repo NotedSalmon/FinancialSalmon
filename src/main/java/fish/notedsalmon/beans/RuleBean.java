@@ -2,8 +2,10 @@ package fish.notedsalmon.beans;
 
 import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
+import fish.notedsalmon.entities.ExpensesRule;
 import fish.notedsalmon.services.ExpenseService;
 import fish.notedsalmon.services.RuleService;
+import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -12,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.primefaces.event.CellEditEvent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,10 +27,10 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class RuleBean implements Serializable {
 
-    private static final Log log = LogFactory.getLog(RuleBean.class);
     private String expenseName;
     private String expenseCategory;
     private Integer category_id;
+    private List<ExpensesRule> expensesRules;
 
     @Inject
     ExpenseService expenseService;
@@ -35,20 +38,23 @@ public class RuleBean implements Serializable {
     @EJB
     RuleService ruleService;
 
+    @PostConstruct
+    public void init() {
+        expensesRules = ruleService.getRulesList();
+    }
+
     public List<String> autoExpenseDescription(String query) {
         String queryLowerCase = query.toLowerCase();
         Set<String> expenseSetNames = new TreeSet<>();
         List<Expenses> expenses = expenseService.getExpensesList();
         for (Expenses expense : expenses) {
             expenseSetNames.add(expense.getDescription());
-            log.info("expense description: " + expense.getDescription());
         }
 
         List<String> filteredExpenseNames = expenseSetNames.stream()
                 .filter(t -> t.toLowerCase().startsWith(queryLowerCase))
                 .collect(Collectors.toList());
 
-        log.info("Filtered List Size: " + filteredExpenseNames.size());
         return filteredExpenseNames;
     }
 
@@ -58,14 +64,12 @@ public class RuleBean implements Serializable {
         List<Category> category = expenseService.getCategoriesList();
         for (Category categories : category) {
             categoriesList.add(categories.getCategory());
-            log.info("Category is: " + categories.getCategory());
         }
 
         List<String> filteredExpenseNames = categoriesList.stream()
                 .filter(t -> t.toLowerCase().startsWith(queryLowerCase))
                 .collect(Collectors.toList());
 
-        log.info("Filtered List Size: " + filteredExpenseNames.size());
         return filteredExpenseNames;
     }
 
@@ -75,6 +79,22 @@ public class RuleBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Successful", "Rule created"));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Rule cannot be created"));
+        }
+    }
+
+    public void onCellEdit(CellEditEvent event) {
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        if (newValue != null && !newValue.equals(oldValue)) {
+            int rowIndex = event.getRowIndex();
+            ExpensesRule rule = expensesRules.get(rowIndex);
+            rule.setExpenseCategory((Integer) newValue);
+
+            ruleService.updateRule(rule);
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Expense Changed", "Old: " + oldValue + ", New: " + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
 
@@ -112,6 +132,14 @@ public class RuleBean implements Serializable {
 
     public void setRuleService(RuleService ruleService) {
         this.ruleService = ruleService;
+    }
+
+    public List<ExpensesRule> getExpensesRules() {
+        return expensesRules;
+    }
+
+    public void setExpensesRules(List<ExpensesRule> expensesRules) {
+        this.expensesRules = expensesRules;
     }
 
     public Integer getCategory_id() {
