@@ -108,8 +108,14 @@ public class ImportBean implements Serializable {
     }
 
     public void clearTable() {
-        expensesList.clear();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table Cleared", "All expenses have been removed."));
+        try {
+            expenseService.truncateExpenses();
+            expensesList = expenseService.getExpensesList();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table Cleared", "All expenses have been removed."));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed to clear table", "All expenses have been removed."));
+        }
+
 
     }
 

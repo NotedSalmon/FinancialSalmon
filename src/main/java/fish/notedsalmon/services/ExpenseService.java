@@ -49,6 +49,11 @@ public class ExpenseService {
         }
     }
 
+    @Transactional
+    public void truncateExpenses() {
+        em.createNativeQuery("TRUNCATE EXPENSES").executeUpdate();
+    }
+
     public Expenses findExpenseById(Integer id) {
         return em.find(Expenses.class, id);
     }

@@ -14,70 +14,63 @@
         <h:outputStylesheet name="style.css"/>
     </ui:define>
     <ui:define name="content">
-        <div class="header">
-            <h:form id="fileUpload" enctype="multipart/form-data">
-                <h:outputText value="Upload File here ->"/>
-                <p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
-                <p:commandButton value="Submit" ajax="false" action="#{importBean.upload()}"
-                                 styleClass="mt-3 ui-button-outlined"/>
-                <p:messages/>
-            </h:form>
+        <div class="container">
+            <div class="header">
+                <h:form id="fileUpload" enctype="multipart/form-data">
+                    <h:outputText value="Upload File here ->"/>
+                    <p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
+                    <p:commandButton value="Submit" ajax="false" action="#{importBean.upload()}" styleClass="mt-3 ui-button-outlined"/>
+                    <p:messages/>
+                </h:form>
+                <div class="chart-container">
+                    <h:form id="chartForm">
+                        <p:chart id="global-chart" value="#{pieChartUtil.pieModel}"/>
+                    </h:form>
+                </div>
+            </div>
 
-            <div class="chart-container">
-                <h:form id="chartForm">
-                    <p:chart id="global-chart" value="#{pieChartUtil.pieModel}"/>
+            <div class="table">
+                <h:form id="expensesTable">
+                    <p:growl id="msgs" showDetail="true"/>
+                    <h3>Sorts multiple columns</h3>
+                    <p>By using CTRL + Left Click , you can sort multiple columns</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <p:button id="createRule" value="Create or display rules" outcome="createRule" styleClass="mt-3 ui-button-outlined"/>
+                        <p:commandButton value="Export to Excel" actionListener="#{exportBean.exportToExcel}" ajax="false" icon="pi pi-file-excel" styleClass="ui-button-success" />
+
+                        <p:commandButton value="Clear Table" action="#{importBean.clearTable}" update="expenses msgs"
+                                         styleClass="ui-button-outlined" style="margin-bottom: 10px;"/>
+                    </div>
+                    <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple" editable="true" editMode="cell"
+                                 widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px" stickyHeader="true" stickyTopAt=".layout-topbar">
+                        <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
+                        <p:column headerText="Date" sortBy="#{expense.expense_date}">
+                            <h:outputText value="#{expense.expense_date}"/>
+                        </p:column>
+                        <p:column headerText="Name" sortBy="#{expense.description}">
+                            <h:outputText value="#{expense.description}"/>
+                        </p:column>
+                        <p:column headerText="Category" sortBy="#{expense.category}" sortOrder="asc" sortPriority="2">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{expense.category.category}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <h:selectOneMenu value="#{expense.category}" style="width:100%" converter="categoryConverter">
+                                        <f:selectItems value="#{importBean.categoriesList}" var="category"
+                                                       itemLabel="#{category.category}" itemValue="#{category}"/>
+                                    </h:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Price" sortBy="#{expense.amount}" sortOrder="desc" sortPriority="1">
+                            <h:outputText value="#{expense.amount}">
+                                <f:convertNumber type="currency" currencySymbol="£"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
                 </h:form>
             </div>
-        </div>
-
-        <div class="content">
-            <h1>This is the Pie Chart</h1>
-        </div>
-
-        <div class="table">
-            <h:form id="expensesTable">
-                <p:growl id="msgs" showDetail="true"/>
-                <h3>Sorts multiple columns</h3>
-                <p>By using CTRL + Left Click, you can sort multiple columns</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <p:button id="createRule" value="Create or display rules" outcome="createRule"
-                              styleClass="mt-3 ui-button-outlined"/>
-                    <p:commandButton value="Clear Table" action="#{importBean.clearTable}" update="expenses msgs"
-                                     styleClass="ui-button-outlined" style="margin-bottom: 10px;"/>
-                </div>
-                <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple"
-                             editable="true" editMode="cell"
-                             widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px"
-                             stickyHeader="true" stickyTopAt=".layout-topbar">
-                    <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
-                    <p:column headerText="Date" sortBy="#{expense.expense_date}">
-                        <h:outputText value="#{expense.expense_date}"/>
-                    </p:column>
-                    <p:column headerText="Name" sortBy="#{expense.description}">
-                        <h:outputText value="#{expense.description}"/>
-                    </p:column>
-                    <p:column headerText="Category" sortBy="#{expense.category.category}" sortOrder="asc"
-                              sortPriority="2">
-                        <p:cellEditor>
-                            <f:facet name="output">
-                                <h:outputText value="#{expense.category.category}"/>
-                            </f:facet>
-                            <f:facet name="input">
-                                <h:selectOneMenu value="#{expense.category}" style="width:100%"
-                                                 converter="categoryConverter">
-                                    <f:selectItems value="#{importBean.categoriesList}" var="category"
-                                                   itemLabel="#{category.category}" itemValue="#{category}"/>
-                                </h:selectOneMenu>
-                            </f:facet>
-                        </p:cellEditor>
-                    </p:column>
-                    <p:column headerText="Price" sortBy="#{expense.amount}" sortOrder="desc" sortPriority="1">
-                        <h:outputText value="#{expense.amount}">
-                            <f:convertNumber type="currency" currencySymbol="£"/>
-                        </h:outputText>
-                    </p:column>
-                </p:dataTable>
-            </h:form>
         </div>
     </ui:define>
 </ui:composition>
