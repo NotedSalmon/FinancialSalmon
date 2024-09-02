@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -52,6 +53,12 @@ public class ExpenseService {
     @Transactional
     public void truncateExpenses() {
         em.createNativeQuery("TRUNCATE EXPENSES").executeUpdate();
+    }
+
+    public double getTotalExpenses() {
+        BigDecimal total = em.createQuery("SELECT SUM(e.amount) FROM Expenses e", BigDecimal.class)
+                .getSingleResult();
+        return total != null ? total.doubleValue() : 0.0;
     }
 
     public Expenses findExpenseById(Integer id) {

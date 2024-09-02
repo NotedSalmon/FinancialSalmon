@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
 <ui:composition template="tabMenu.xhtml">
     <ui:define name="title">
         Budget Page
@@ -13,9 +13,44 @@
     <ui:define name="script">
         <h:outputStylesheet name="style.css"/>
     </ui:define>
-
     <ui:define name="content">
+        <div class="container">
 
+            <h2>Monthly Budget</h2>
+            <div class="content">
+                <h:form id="budgetForm">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel for="monthlyBudget" value="Enter your monthly budget:"/>
+                        <h:inputText id="monthlyBudget" value="#{budgetBean.monthlyBudget}" required="true"/>
+
+                        <h:commandButton value="Calculate" action="#{budgetBean.calculateBudget}" update="resultPanel"/>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:panelGrid id="resultPanel" columns="2" cellpadding="5" style="margin-top: 20px;">
+                    <h:outputLabel value="Your total expenses:"/>
+                    <h:outputText value="#{budgetBean.totalExpenses}">
+                        <f:convertNumber type="currency" currencySymbol="£"/>
+                    </h:outputText>
+
+                    <h:outputLabel value="Remaining Budget:"/>
+                    <h:outputText value="#{budgetBean.remainingBudget}">
+                        <f:convertNumber type="currency" currencySymbol="£"/>
+                    </h:outputText>
+
+                    <h:outputLabel value="Status:"/>
+                    <h:outputText style="color:#{budgetBean.remainingBudget lt 0 ? 'red' : 'green'};" value="#{budgetBean.remainingBudget lt 0 ? 'Over Budget' : 'Within Budget'}"/>
+                </h:panelGrid>
+            </div>
+
+            <div class="barChart">
+                <h5>Bar</h5>
+                <p:chart id="barChart" value="#{chartUtil.barModel}" style="width: 100%; height: 500px;">
+
+                </p:chart>
+            </div>
+
+        </div>
     </ui:define>
 </ui:composition>
 </html>

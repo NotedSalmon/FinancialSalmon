@@ -49,13 +49,20 @@ public class ExportService {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment;filename=expenses.xlsx");
 
-        try (FileOutputStream outputStream = new FileOutputStream("expenses.xlsx")) {
+        try (OutputStream  outputStream = response.getOutputStream()) {
             workbook.write(outputStream);
-            workbook.close();
+            facesContext.responseComplete();
+            log.info("Export completed");
             return true;
         } catch (IOException e) {
-            log.error("Error writing excel file", e);
+            log.error("Error writing workbook", e);
             return false;
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                log.error("Error closing workbook", e);
+            }
         }
 
     }
