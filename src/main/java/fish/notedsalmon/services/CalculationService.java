@@ -10,8 +10,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestScoped
 public class CalculationService {
@@ -50,6 +55,24 @@ public class CalculationService {
                 }
             }
         }
+    }
+
+    public Map<YearMonth, BigDecimal> getMonthlyExpenses() {
+        Map<YearMonth, BigDecimal> monthlyExpenses = new HashMap<>();
+
+        for (int month = 1; month <= 12; month++) {
+            YearMonth yearMonth = YearMonth.of(LocalDate.now().getYear(), month);
+            monthlyExpenses.put(yearMonth, BigDecimal.ZERO);
+        }
+
+        for (Expenses expense : expensesList) {
+            LocalDateTime expenseDate = expense.getExpense_date();
+            YearMonth yearMonth = YearMonth.of(expenseDate.getYear(), expenseDate.getMonthValue());
+
+            BigDecimal currentTotal = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
+            monthlyExpenses.put(yearMonth, currentTotal.add(expense.getAmount()));
+        }
+        return monthlyExpenses;
     }
 
     private CategorySum findCategorySumByName(String categoryName) {

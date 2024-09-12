@@ -19,8 +19,14 @@ import software.xdev.chartjs.model.options.Plugins;
 import software.xdev.chartjs.model.options.Title;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -39,10 +45,12 @@ public class ChartUtil implements Serializable {
     private String pieModel;
     private String barModel;
     private Double budget;
+    private Double defaultBudget;
     private static final Logger LOGGER = Logger.getLogger(ChartUtil.class.getName());
 
     @PostConstruct
     public void init() {
+        defaultBudget = 450.00;
         createPieModel();
         createBarModel();
     }
@@ -83,32 +91,63 @@ public class ChartUtil implements Serializable {
 
     public void createBarModel() {
         budget = budgetBean.getMonthlyBudget();
-        barModel = new BarChart()
-                .setData(new BarData()
-                        .addDataset(new BarDataset()
-                                //Get data from db, new table?
-                                .setData(450, 450, 450, 450, 450, 450, 450)
-                                .setLabel("Budget")
-                                .setBackgroundColor(new Color(255, 99, 132, 0.2))
-                                .setBorderColor(new Color(255, 99, 132))
-                                .setBorderWidth(1))
-                        .addDataset(new BarDataset()
-                                .setData(800, 300, 1200, 450, 433, 475, 200)
-                                .setLabel("Expenses")
-                                .setBackgroundColor(new Color(255, 159, 64, 0.2))
-                                .setBorderColor(new Color(255, 159, 64))
-                                .setBorderWidth(1)
-                        )
-                        .setLabels("January", "February", "March", "April", "May", "June", "July"))
-                .setOptions(new BarOptions()
-                        .setResponsive(true)
-                        .setMaintainAspectRatio(false)
-                        .setIndexAxis(BarOptions.IndexAxis.X)
-                        .setPlugins(new Plugins()
-                                .setTitle(new Title()
-                                        .setDisplay(true)
-                                        .setText("Budget Graph")))
-                ).toJson();
+        BarData barData = new BarData();
+        BarDataset budgetDataset = new BarDataset();
+        BarDataset expensesDataset = new BarDataset();
+
+        Map<YearMonth, BigDecimal> monthlyExpenses = calculationService.getMonthlyExpenses();
+        List<Number> expensesList = new ArrayList<>();
+        List<Number> budgetsList = new ArrayList<>();
+        List<String> monthList = new ArrayList<>();
+
+        //Stores map values of monthlyExpenses to the array which then gets called later in the .setData
+        for (int month = 1; month <= 12; month++) {
+            YearMonth yearMonth = YearMonth.of(LocalDate.now().getYear(), month);
+            BigDecimal expense = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
+            expensesList.add(expense.doubleValue());
+            budgetsList.add(defaultBudget);
+            String monthName = yearMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            monthList.add(monthName);
+        }
+
+        budgetDataset.setData(budgetsList)
+                .setLabel("Budget")
+                .setBackgroundColor(new Color(255, 99, 132, 0.2))
+                .setBorderColor(new Color(255, 99, 132))
+                .setBorderWidth(1);
+
+
+
+        expensesDataset.setData(expensesList)
+                .setLabel("Expenses")
+                .setBackgroundColor(new Color(255, 159, 64, 0.2))
+                .setBorderColor(new Color(255, 159, 64))
+                .setBorderWidth(1);
+
+        //Use a for loop to populate values
+
+        barData.addDataset(budgetDataset);
+        barData.addDataset(expensesDataset);
+        barData.setLabels(monthList);
+
+        BarOptions barOptions = new BarOptions();
+        barOptions.setResponsive(true)
+                .setMaintainAspectRatio(false)
+                .setIndexAxis(BarOptions.IndexAxis.X);
+
+        Plugins plugins = new Plugins();
+        Title title = new Title();
+        title.setDisplay(true)
+                .setText("Budget Bar Chart");
+        plugins.setTitle(title);
+
+        barOptions.setPlugins(plugins);
+
+        BarChart barChart = new BarChart();
+        barChart.setData(barData)
+                .setOptions(barOptions);
+
+        barModel = barChart.toJson();
     }
 
     public String getPieModel() {
