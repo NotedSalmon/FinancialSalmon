@@ -1,11 +1,14 @@
 package fish.notedsalmon.services;
 
+import fish.notedsalmon.beans.ImportBean;
 import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
+import fish.notedsalmon.exceptions.NotFoundException;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -29,6 +32,9 @@ public class ExpenseService {
     private static final Random random = new Random();
 
     private static final Log log = LogFactory.getLog(ExpenseService.class);
+
+    @Inject
+    private ImportBean importBean;
     @PersistenceContext
     private EntityManager em;
 
@@ -39,6 +45,10 @@ public class ExpenseService {
             "Coffee", "Games", "Health Supplements",
             "Netflix"
     };
+
+    public ExpenseService() {
+
+    }
 
 
     public List<Expenses> getExpensesList() {
@@ -86,8 +96,12 @@ public class ExpenseService {
             expense.setDescription(randomDescription());
             expense.setExpense_date(generateRandomDate());
 
-            em.persist(expense);
+            saveExpense(expense);
         }
+    }
+
+    public void saveExpense(Expenses expense) {
+        em.persist(expense);
     }
 
     private BigDecimal generateRandomAmount() {
@@ -110,6 +124,14 @@ public class ExpenseService {
         int month = random.nextInt(12) + 1;
         int day = random.nextInt(28) + 1;
         return LocalDateTime.of(year, month, day, random.nextInt(24), random.nextInt(60));
+    }
+
+    public void deleteExpense(int id) throws NotFoundException {
+        Expenses expenses = em.find(Expenses.class, id);
+        if (expenses == null) {
+            throw new NotFoundException("Expense: "+ id+ " not found");
+        }
+        em.remove(expenses);
     }
 
     public Expenses findExpenseById(Integer id) {

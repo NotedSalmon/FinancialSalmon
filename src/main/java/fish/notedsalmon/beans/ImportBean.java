@@ -2,11 +2,13 @@ package fish.notedsalmon.beans;
 
 import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
+import fish.notedsalmon.exceptions.NotFoundException;
 import fish.notedsalmon.services.BankParserService;
 import fish.notedsalmon.services.EditService;
 import fish.notedsalmon.services.ExpenseService;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
+import jakarta.el.MethodExpression;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -125,5 +127,9 @@ public class ImportBean implements Serializable {
 
     public void setFile(UploadedFile file) {
         this.file = file;
+    }
+
+    public void deleteExpense(int id) throws NotFoundException {
+        expenseService.deleteExpense(id);
     }
 }

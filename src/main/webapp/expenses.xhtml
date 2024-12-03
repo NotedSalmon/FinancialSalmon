@@ -68,6 +68,9 @@
                                 <f:convertNumber type="currency" currencySymbol="£"/>
                             </h:outputText>
                         </p:column>
+                        <p:column>
+                            <p:commandButton id="btnDelete" action="#{importBean.deleteExpense(expense.id)}" value="Delete"/>
+                        </p:column>
                     </p:dataTable>
                 </h:form>
             </div>
