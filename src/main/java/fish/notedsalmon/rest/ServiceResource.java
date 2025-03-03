@@ -29,10 +29,16 @@ public class ServiceResource {
     @Path("/generateExampleExpenses")
     @Produces(MediaType.APPLICATION_JSON)
     public String generateExampleExpenses() {
-        expenseService.generateExampleExpenses();
-        return "Successful generated Expenses";
+        expenseService.generateExampleExpensesSequential();
+        return "Successful generated Expenses Sequential";
     }
 
+    @GET
+    @Path("/generateExampleExpensesParallel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String generateExampleExpensesParallel() {
+        expenseService.generateExampleExpensesParallel();
+        return "Successful generated Expenses Parallel";
+    }
 
-    // TODO create CRUD actions within th rest api
 }

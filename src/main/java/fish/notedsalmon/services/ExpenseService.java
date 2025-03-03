@@ -4,25 +4,32 @@ import fish.notedsalmon.beans.ImportBean;
 import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
 import fish.notedsalmon.exceptions.NotFoundException;
-import jakarta.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.concurrent.ManagedThreadFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
+
+import javax.xml.crypto.Data;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 
 @Named
 @Transactional
@@ -30,6 +37,12 @@ import java.util.logging.Logger;
 public class ExpenseService {
 
     private static final Random random = new Random();
+
+    @Resource
+    private ManagedExecutorService managedExecutorService;
+
+    @Resource
+    ManagedThreadFactory managedThreadFactory ;
 
     private static final Log log = LogFactory.getLog(ExpenseService.class);
 
@@ -83,13 +96,38 @@ public class ExpenseService {
         return total != null ? total.doubleValue() : 0.0;
     }
 
-    public void generateExampleExpenses() {
+    public void generateExampleExpensesParallel() {
+        List< Future<?> > future = new ArrayList<>();
+        for (int i=0; i < 5; i++){
+            System.out.println("Scheduling task number: " + i);
+            future.add(managedExecutorService.submit(()->{
+                generateExampleExpenses();
+            }));
+        }
+        System.out.println("Waiting for results");
+        for (Future<?> f : future){
+            try {
+                f.get();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void generateExampleExpensesSequential() {
+        for (int i=0; i < 30; i++){
+            generateExampleExpenses();
+        }
+    }
+
+    private void generateExampleExpenses() {
+        System.out.println("Start of generateExampleExpenses");
         List<Category> categories = em.createQuery("SELECT c FROM Category c", Category.class).getResultList();
         if (categories.isEmpty()) {
             throw new RuntimeException("Error: No categories found");
         }
 
-        for (int i=0; i < random.nextInt(51) + 50; i++) {
+        for (int i=0; i < 500; i++) {
             Expenses expense = new Expenses();
             expense.setAmount(generateRandomAmount());
             expense.setCategory(randomCategory(categories));
@@ -98,6 +136,7 @@ public class ExpenseService {
 
             saveExpense(expense);
         }
+        System.out.println(new Date());
     }
 
     public void saveExpense(Expenses expense) {

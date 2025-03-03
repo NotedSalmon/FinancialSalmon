@@ -1,0 +1,33 @@
+version: '1'
+services:
+ 
+  financialsalmon-payara:
+#    see info at https://hub.docker.com/r/payara/server-full/
+    image: financialsalmon-payara
+    container_name: financialsalmon-payara
+    restart: always
+    depends_on:
+      - financialsalmon-db
+    ports:
+      - "9080:8080" # web
+      - "9081:8181" # web https
+      - "9048:4848" # admin
+      - "9009:9009" # debug
+ 
+  financialsalmon-db:
+    image: postgres
+    restart: always
+    container_name: financialsalmon-db
+#    user: "1000:1000"
+    volumes:
+      - financialsalmon-db:/var/lib/postgresql/data
+#      - ./db-init:/docker-entrypoint-initdb.d/
+    environment:
+      - POSTGRES_DB=FinancialSalmon
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "9054:5432"
+ 
+volumes:
+    financialsalmon-db:
