@@ -71,6 +71,18 @@ public class ExpenseService {
         return expensesList;
     }
 
+    public List<Expenses> getExpensesListPaginated(int firstResult, int maxResults) {
+        return em.createQuery("SELECT e FROM Expenses e", Expenses.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .getResultList();
+    }
+
+
+    public long countExpenses() {
+        return em.createQuery("SELECT COUNT(e) FROM Expenses e", Long.class)
+                .getSingleResult();
+    }
 
     public List<Category> getCategoriesList() {
         return em.createQuery("SELECT c FROM Category c", Category.class).getResultList();

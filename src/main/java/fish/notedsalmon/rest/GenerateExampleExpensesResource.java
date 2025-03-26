@@ -4,6 +4,7 @@ import fish.notedsalmon.entities.Category;
 import fish.notedsalmon.entities.Expenses;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
@@ -25,7 +26,7 @@ public class GenerateExampleExpensesResource {
     @Context
     private UriInfo uriInfo;
 
-    @Inject
+    @PersistenceContext
     private EntityManager em;
 
     private static final String[] SAMPLE_DESCRIPTIONS = {

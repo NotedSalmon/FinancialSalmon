@@ -40,14 +40,18 @@ public class ImportBean implements Serializable {
     private UploadedFile file;
     private List<Expenses> expensesList;
     private List<Category> categoriesList;
+    private int rowCount = 100;
+    private int firstResult = 0;
+    private long totalExpenseCount;
 
     @PostConstruct
     public void init() {
-        expensesList = expenseService.getExpensesList();
+        expensesList = expenseService.getExpensesListPaginated(firstResult, rowCount);
         categoriesList = expenseService.getCategoriesList();
-
+        totalExpenseCount = expenseService.countExpenses();
         addDefaultCategories();
     }
+
 
     /**
      * Creates default classes with colours
@@ -85,7 +89,7 @@ public class ImportBean implements Serializable {
     }
 
     public List<Expenses> getExpenses() {
-        return expensesList;
+        return expenseService.getExpensesListPaginated(firstResult, rowCount);
     }
 
     public void onCellEdit(CellEditEvent event) {
@@ -131,5 +135,26 @@ public class ImportBean implements Serializable {
 
     public void deleteExpense(int id) throws NotFoundException {
         expenseService.deleteExpense(id);
+    }
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
+        this.firstResult = 0;  // Reset to the first page
+        if (rowCount == 0) {
+            expensesList = expenseService.getExpensesList();  // Get all records if rowCount is 0
+        } else {
+            expensesList = expenseService.getExpensesListPaginated(firstResult, rowCount);
+        }
+    }
+
+    public long getTotalExpenseCount() {
+        return expenseService.countExpenses();
+    }
+
+    public void setTotalExpenseCount(long totalExpenseCount) {
+        this.totalExpenseCount = totalExpenseCount;
     }
 }

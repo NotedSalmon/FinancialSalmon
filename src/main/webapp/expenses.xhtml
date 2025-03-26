@@ -30,6 +30,15 @@
             </div>
 
             <div class="table">
+                <h:form id="tableSettingsForm">
+                    <p:selectOneMenu value="#{importBean.rowCount}" styleClass="ui-dropdown">
+                        <f:selectItem itemLabel="100" itemValue="100" />
+                        <f:selectItem itemLabel="250" itemValue="250" />
+                        <f:selectItem itemLabel="All" itemValue="0" />
+                        <p:ajax update=":expensesTable:expenses" />
+                    </p:selectOneMenu>
+                </h:form>
+
                 <h:form id="expensesTable">
                     <p:growl id="msgs" showDetail="true"/>
                     <h3>Sorts multiple columns</h3>
@@ -41,8 +50,11 @@
                         <p:commandButton value="Clear Table" action="#{importBean.clearTable}" update="expenses msgs"
                                          styleClass="ui-button-outlined" style="margin-bottom: 10px;"/>
                     </div>
-                    <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}" sortMode="multiple" editable="true" editMode="cell"
-                                 widgetVar="cellCars2" editInitEvent="dblclick" style="margin-bottom:20px" stickyHeader="true" stickyTopAt=".layout-topbar">
+                    <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}"
+                                 paginator="true" rows="#{importBean.rowCount}"
+                                 rowsPerPageTemplate="100,250,all"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                 totalRecords="#{importBean.totalExpenseCount}">
                         <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
                         <p:column headerText="Date" sortBy="#{expense.expense_date}">
                             <h:outputText value="#{expense.expense_date}"/>

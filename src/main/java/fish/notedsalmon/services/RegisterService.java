@@ -2,6 +2,7 @@ package fish.notedsalmon.services;
 
 
 import fish.notedsalmon.entities.User;
+import fish.notedsalmon.entities.UserRole;
 import fish.notedsalmon.utils.PasswordHasher;
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
@@ -26,6 +27,12 @@ public class RegisterService {
             String hashedPassword = PasswordHasher.hashPassword(password);
             User createNewUser = new User(firstName,lastName,username,email,hashedPassword);
             em.persist(createNewUser);
+
+            UserRole role = new UserRole();
+            role.setUserId(username);
+            role.setRoleId("USER");
+            em.persist(role);
+
         } catch (Exception e) {
             return false;
         }
