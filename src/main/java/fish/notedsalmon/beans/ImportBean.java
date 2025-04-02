@@ -46,7 +46,7 @@ public class ImportBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        expensesList = expenseService.getExpensesListPaginated(firstResult, rowCount);
+        expensesList = expenseService.getExpensesListPaginated();
         categoriesList = expenseService.getCategoriesList();
         totalExpenseCount = expenseService.countExpenses();
         addDefaultCategories();
@@ -89,7 +89,7 @@ public class ImportBean implements Serializable {
     }
 
     public List<Expenses> getExpenses() {
-        return expenseService.getExpensesListPaginated(firstResult, rowCount);
+        return expenseService.getExpensesListPaginated();
     }
 
     public void onCellEdit(CellEditEvent event) {
@@ -146,7 +146,7 @@ public class ImportBean implements Serializable {
         if (rowCount == 0) {
             expensesList = expenseService.getExpensesList();  // Get all records if rowCount is 0
         } else {
-            expensesList = expenseService.getExpensesListPaginated(firstResult, rowCount);
+            expensesList = expenseService.getExpensesListPaginated();
         }
     }
 

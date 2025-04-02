@@ -7,21 +7,23 @@
     <h:outputStylesheet name="style.css"/>
 </h:head>
 <h:body>
-    <h:form id="loginForm">
+    <form id="loginForm" method="post" action="j_security_check">
         <p:panel header="Login">
             <h:panelGrid columns="2" cellpadding="5">
-                <h:outputLabel for="username" value="Username:" />
-                <p:inputText id="username" value="#{loginBean.username}" required="true" />
+                <h:outputLabel value="Username:" />
+                <input type="text" name="j_username" placeholder="username"/> <br />
 
-                <h:outputLabel for="password" value="Password:" />
-                <p:password id="password" value="#{loginBean.password}" required="true" />
+                <h:outputLabel value="Password:" />
+                <input type="password" name="j_password" placeholder="•••••" /><br/>
 
-                <p:commandButton value="Login" action="#{loginBean.login}" update="loginForm" />
+                <input type="submit" value="Login" />
                 <p:button value="Back" outcome="index"/>
                 <p:button value="Skip" outcome="expenses"/>
             </h:panelGrid>
         </p:panel>
         <p:messages id="messages" autoUpdate="true" />
-    </h:form>
+    </form>
 </h:body>
 </html>
+
+

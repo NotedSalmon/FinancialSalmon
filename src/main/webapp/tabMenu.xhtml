@@ -14,7 +14,9 @@
 
 <h:body>
         <div class="card">
+
             <p:tabMenu id="menuItems" activeIndex="#{param.i}">
+                <h:outputLabel value="#{request.remoteUser}" />
                 <p:menuitem value="Home" outcome="expenses.xhtml" icon="pi pi-fw pi-home">
                     <f:param name="i" value="0"/>
                 </p:menuitem>

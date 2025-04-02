@@ -53,8 +53,7 @@
                     <p:dataTable id="expenses" var="expense" value="#{importBean.expenses}"
                                  paginator="true" rows="#{importBean.rowCount}"
                                  rowsPerPageTemplate="100,250,all"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                 totalRecords="#{importBean.totalExpenseCount}">
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                         <p:ajax event="cellEdit" listener="#{importBean.onCellEdit}" update="expenses msgs :chartForm"/>
                         <p:column headerText="Date" sortBy="#{expense.expense_date}">
                             <h:outputText value="#{expense.expense_date}"/>

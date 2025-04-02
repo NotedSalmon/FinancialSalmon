@@ -10,9 +10,15 @@
 <h:body>
     <h:form>
         <p:panel header="Welcome to FinancialSalmon">
-            <h:panelGrid columns="2" cellpadding="5">
+            <h:panelGrid columns="2" cellpadding="5" rendered="#{empty request.remoteUser}">
                 <p:commandButton value="Login" action="login.xhtml?faces-redirect=true"/>
                 <p:commandButton value="Register" action="register.xhtml?faces-redirect=true"/>
+            </h:panelGrid>
+            <h:panelGrid columns="1" cellpadding="5" rendered="#{not empty request.remoteUser}">
+                <h1>
+                    Welcome - #{request.remoteUser}
+                </h1>
+                <p:commandButton value="Enter" action="expenses.xhtml?faces-redirect=true"/>
             </h:panelGrid>
         </p:panel>
     </h:form>
