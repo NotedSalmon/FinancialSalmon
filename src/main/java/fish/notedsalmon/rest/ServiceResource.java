@@ -26,7 +26,7 @@ public class ServiceResource {
     public ServiceResource() {}
 
     @GET
-    @Path("/generateExampleExpenses")
+    @Path("/generateExampleExpensesSequential")
     @Produces(MediaType.APPLICATION_JSON)
     public String generateExampleExpenses() {
         expenseService.generateExampleExpensesSequential();

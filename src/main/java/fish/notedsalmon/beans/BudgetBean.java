@@ -1,6 +1,7 @@
 package fish.notedsalmon.beans;
 
 import fish.notedsalmon.services.ExpenseService;
+import fish.notedsalmon.utils.ChartUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -31,8 +32,12 @@ public class BudgetBean implements Serializable {
         remainingBudget = 0.0;
     }
 
+    @Inject
+    private ChartUtil chartUtil;
+
     public void calculateBudget() {
         remainingBudget = monthlyBudget - totalExpenses;
+        chartUtil.createBarModel();
     }
 
     // Getters and Setters

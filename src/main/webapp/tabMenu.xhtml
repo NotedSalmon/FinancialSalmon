@@ -13,6 +13,7 @@
 </h:head>
 
 <h:body>
+    <p:messages id="messages" autoUpdate="true" />
         <div class="card">
 
             <p:tabMenu id="menuItems" activeIndex="#{param.i}">
@@ -23,11 +24,16 @@
                 <p:menuitem value="Rule" outcome="createRule.xhtml" icon="pi pi-fw pi-pencil">
                     <f:param name="i" value="1"/>
                 </p:menuitem>
-                <p:menuitem value="Log Out" outcome="budget.xhtml" icon="pi pi-fw pi-file">
+                <p:menuitem value="Monthly Expenses" outcome="budget.xhtml" icon="pi pi-fw pi-file">
                     <f:param name="i" value="2"/>
                 </p:menuitem>
-                <p:menuitem value="Settings" outcome="index.xhtml" icon="pi pi-fw pi-cog">
-                    <f:param name="i" value="3"/>
+                <p:menuitem value="Log Out" icon="pi pi-fw pi-sign-out" >
+                    <p:commandLink action="#{loginBean.logout}"
+                                   update="messages"
+                                   ajax="true"
+                                   immediate="true"
+                                   process="@this"
+                                   oncomplete="window.location='index.xhtml'"/>
                 </p:menuitem>
             </p:tabMenu>
         </div>

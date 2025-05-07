@@ -5,6 +5,7 @@ import fish.notedsalmon.records.CategorySum;
 import fish.notedsalmon.services.CalculationService;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import software.xdev.chartjs.model.charts.BarChart;
@@ -21,6 +22,7 @@ import software.xdev.chartjs.model.options.Title;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 @Named
-@RequestScoped
+@ViewScoped
 public class ChartUtil implements Serializable {
 
     @Inject
@@ -95,18 +97,17 @@ public class ChartUtil implements Serializable {
         BarDataset budgetDataset = new BarDataset();
         BarDataset expensesDataset = new BarDataset();
 
-        Map<YearMonth, BigDecimal> monthlyExpenses = calculationService.getMonthlyExpenses();
+        Map<Integer, BigDecimal> monthlyExpenses = calculationService.getMonthlyExpensesByMonthOnly();
         List<Number> expensesList = new ArrayList<>();
         List<Number> budgetsList = new ArrayList<>();
         List<String> monthList = new ArrayList<>();
 
         //Stores map values of monthlyExpenses to the array which then gets called later in the .setData
         for (int month = 1; month <= 12; month++) {
-            YearMonth yearMonth = YearMonth.of(LocalDate.now().getYear(), month);
-            BigDecimal expense = monthlyExpenses.getOrDefault(yearMonth, BigDecimal.ZERO);
+            BigDecimal expense = monthlyExpenses.getOrDefault(month, BigDecimal.ZERO);
             expensesList.add(expense.doubleValue());
-            budgetsList.add(defaultBudget);
-            String monthName = yearMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            budgetsList.add(budget != null ? budget : defaultBudget);
+            String monthName = Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
             monthList.add(monthName);
         }
 

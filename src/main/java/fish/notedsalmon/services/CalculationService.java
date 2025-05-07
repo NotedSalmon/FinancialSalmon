@@ -13,10 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestScoped
 public class CalculationService {
@@ -56,6 +53,28 @@ public class CalculationService {
             }
         }
     }
+
+    public Map<Integer, BigDecimal> getMonthlyExpensesByMonthOnly() {
+        List<Object[]> results = em.createNativeQuery(
+                        "SELECT EXTRACT(MONTH FROM expense_date) AS month, SUM(amount) AS total " +
+                                "FROM expenses " +
+                                "GROUP BY month " +
+                                "ORDER BY month")
+                .getResultList();
+
+        Map<Integer, BigDecimal> resultMap = new LinkedHashMap<>();
+        for (Object[] row : results) {
+            Double monthDouble = ((Number) row[0]).doubleValue(); // Handle type safely
+            Integer month = monthDouble.intValue();               // Convert to int (1–12)
+            BigDecimal total = (BigDecimal) row[1];
+            resultMap.put(month, total);
+        }
+
+        return resultMap;
+    }
+
+
+
 
     public Map<YearMonth, BigDecimal> getMonthlyExpenses() {
         Map<YearMonth, BigDecimal> monthlyExpenses = new HashMap<>();
